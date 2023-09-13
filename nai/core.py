@@ -52,4 +52,5 @@ class NyxAI:
 	
 	# ===== Main methods ===== #
 
-	def __init__(self, state: Entity=None, interface: Callable[[Entity, Entity], Entity]=None, actions: list[Action]=[])
+	def __init__(self,state:Entity=None,interface:Callable[[Entity,Entity],Entity]=None,actions:list[Action]=[]) -> None:
+		self.state, self.interface, self.actions = state, interface, actions
