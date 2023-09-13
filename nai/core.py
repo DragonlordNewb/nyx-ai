@@ -36,11 +36,12 @@ class NyxAI:
 
 	state: Entity = None
 	interface: Callable[[Entity, Entity], Entity] = None
-	passiveLearning: Callable[["NyxAI"], None] = None
+	passiveLearning: Callable[], Action] = None
 	actions: list[Action] = []
 	directive: Entity = None
 	_ready: bool = False
 	_inControl: bool = True
+	active: bool = False
 
 	@property
 	def ready(self) -> bool:
@@ -73,6 +74,20 @@ class NyxAI:
 	@inControl.getter
 	def inControl(self) -> bool:
 		return self._inControl
+
+	@property
+	def processor(self) -> None:
+		return None
+
+	@processor.getter
+	def processor(self) -> Callable:
+		if self.active:
+			return self.interface
+		return self.passiveLearning
+
+	@processor.setter
+	def processor(self, value) -> None:
+		raise self.SystemFailure("Can\'t directly set processor.")
 	
 	# ===== Main methods ===== #
 
@@ -81,7 +96,7 @@ class NyxAI:
 		     interface: Callable[[Entity, Entity], Entity]=None,
 		     actions: list[Action]=[],
 		     directive: Entity=None,
-		     passiveLearning: Callable[["NyxAI"], None]=None) -> None:
+		     passiveLearning: Callable[[], Action]=None) -> None:
 		self.state, self.interface, self.actions, self.directive, self.passiveLearning = state, interface, actions, directive, passiveLearning
 
 	def decide(self) -> Action:
@@ -109,6 +124,18 @@ class NyxAI:
 		if self.inControl:
 			action.record(self.directive, self.state, newState)
 		self.state = newState
+
+	def activate(self) -> None:
+		self.active = True
+
+	def deactivate(self) -> None:
+		self.active = False
+
+	def execute(self, iterations: int=1) -> None:
+		proc = self.processor
+
+	def direct(self, directive: Entity) -> None:
+		self.directive = directive
 	
 	def hijack(self, *actions: tuple[Action]) -> None:
 		self.inControl = False
