@@ -74,21 +74,7 @@ class NyxAI:
 	@inControl.getter
 	def inControl(self) -> bool:
 		return self._inControl
-
-	@property
-	def processor(self) -> None:
-		return None
-
-	@processor.getter
-	def processor(self) -> Callable:
-		if self.active:
-			return self.interface
-		return self.passiveLearning
-
-	@processor.setter
-	def processor(self, value) -> None:
-		raise self.SystemFailure("Can\'t directly set processor.")
-	
+		
 	# ===== Main methods ===== #
 
 	def __init__(self,
@@ -131,9 +117,20 @@ class NyxAI:
 	def deactivate(self) -> None:
 		self.active = False
 
-	def execute(self, iterations: int=1) -> None:
-		proc = self.processor
-
+	def execute(self, iterations: int=1) -> Entity:
+		if iterations > 1:
+			for _ in range(iterations - 1):
+				self.execute(1)
+				
+		if self.active:
+			action = self.decide()
+			self.take(action)
+		else:
+			action = self.passiveLearning()
+			self.take(action)
+			
+		return self.state
+	
 	def direct(self, directive: Entity) -> None:
 		self.directive = directive
 	
