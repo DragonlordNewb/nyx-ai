@@ -36,6 +36,7 @@ class NyxAI:
 
 	state: Entity = None
 	interface: Callable[[Entity, Entity], Entity] = None
+	passiveLearning: Callable[["NyxAI"], None] = None
 	actions: list[Action] = []
 	directive: Entity = None
 	_ready: bool = False
@@ -79,8 +80,9 @@ class NyxAI:
 		     state: Entity=None,
 		     interface: Callable[[Entity, Entity], Entity]=None,
 		     actions: list[Action]=[],
-		     directive: Entity=None) -> None:
-		self.state, self.interface, self.actions, self.directive = state, interface, actions, directive
+		     directive: Entity=None,
+		     passiveLearning: Callable[["NyxAI"], None]=None) -> None:
+		self.state, self.interface, self.actions, self.directive, self.passiveLearning = state, interface, actions, directive, passiveLearning
 
 	def decide(self) -> Action:
 		scores: tuple[Action, Scalar] = []
