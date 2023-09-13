@@ -105,7 +105,7 @@ class NyxAI:
 		if not self.ready:
 			raise self.SystemFailure("NyxAI not ready to operate.")
 			
-		newState = self.interface(self.state, action
+		newState = self.interface(self.state, action)
 					  
 		if self.inControl:
 			action.record(self.directive, self.state, newState)
@@ -139,3 +139,8 @@ class NyxAI:
 		for action in actions:
 			self.take(action)
 		self.inControl = True
+
+	def currentScore(self) -> Scalar:
+		if self.directive == None:
+			return None
+		return self.state % self.directive
