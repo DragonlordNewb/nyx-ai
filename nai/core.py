@@ -35,6 +35,7 @@ class NyxAI:
 	interface: Callable[[Entity, Entity], Entity] = None
 	actions: list[Action] = []
 	_ready: bool = False
+	_inControl: bool = True
 
 	@property
 	def ready(self) -> bool:
@@ -47,10 +48,34 @@ class NyxAI:
 		return self._ready
 	
 	@ready.setter
-	def ready(self) -> bool:
+	def ready(self, value) -> bool:
 		raise SyntaxError("Readiness can\'t be directly set.")
+
+	@property
+	def inControl(self) -> bool:
+		return self._inControl
+
+	@inControl.setter
+	def inControl(self, value) -> None:
+		if type(value) == bool:
+			if value:
+				print("NyxAI regained control.")
+			else:
+				print("NyxAI lost control.")
+			self._inControl = value
+		raise TypeError("inControl must be a bool.")
+
+	@inControl.getter
+	def inControl(self) -> bool:
+		return self._inControl
 	
 	# ===== Main methods ===== #
 
 	def __init__(self,state:Entity=None,interface:Callable[[Entity,Entity],Entity]=None,actions:list[Action]=[]) -> None:
 		self.state, self.interface, self.actions = state, interface, actions
+		
+	def hijack(self, *actions: tuple[Action]) -> None:
+		self.inControl = False
+		for action in actions:
+			self.take(action)
+		self.inControl = True
